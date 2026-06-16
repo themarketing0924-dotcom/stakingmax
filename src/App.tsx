@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
-import { Menu, X, ShieldAlert } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, NavLink, useLocation } from 'react-router-dom';
+import { Menu, X, AlertTriangle, ChevronDown } from 'lucide-react';
 
-// 페이지 컴포넌트 임포트
 import Home from './pages/Home';
 import Assets from './pages/Assets';
 import AssetDetail from './pages/AssetDetail';
@@ -16,141 +15,217 @@ import Report from './pages/Report';
 
 import './App.css';
 
+/* ── Scroll to top on route change ── */
+function ScrollReset() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, [pathname]);
+  return null;
+}
+
 function App() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
+  const navLinkStyle = ({ isActive }: { isActive: boolean }): React.CSSProperties => ({
     textDecoration: 'none',
-    fontSize: '15px',
-    fontWeight: 600,
-    color: isActive ? '#3b82f6' : '#9ca3af',
-    transition: 'all 0.2s ease',
-    padding: '8px 12px',
+    fontSize: '14px',
+    fontWeight: isActive ? 700 : 500,
+    color: isActive ? 'var(--color-blue)' : 'var(--color-navy-mid)',
+    padding: '6px 12px',
     borderRadius: '8px',
-    backgroundColor: isActive ? 'rgba(59, 130, 246, 0.08)' : 'transparent',
+    background: isActive ? 'var(--color-blue-bg)' : 'transparent',
+    transition: 'var(--transition)',
+    letterSpacing: '-0.2px',
   });
+
+  const mobileNavStyle: React.CSSProperties = {
+    textDecoration: 'none',
+    fontSize: '17px',
+    fontWeight: 600,
+    color: 'var(--color-navy)',
+    padding: '16px 0',
+    borderBottom: '1px solid var(--color-border)',
+    display: 'block',
+    letterSpacing: '-0.3px',
+  };
 
   return (
     <Router>
+      <ScrollReset />
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        
-        {/* Top Announcement Bar */}
-        <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderBottom: '1px solid rgba(239, 68, 68, 0.2)', padding: '8px 16px', fontSize: '13px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <ShieldAlert style={{ color: '#ef4444', width: '16px', height: '16px' }} />
-          <span>가상자산 스테이킹은 확정 수익 예금이 아니며, 원금 보장 대상이 아닙니다.</span>
-          <Link to="/risk" style={{ color: '#ef4444', fontWeight: 'bold', textDecoration: 'underline' }}>위험고지 보기</Link>
+
+        {/* ── Risk Ticker Bar ── */}
+        <div style={{
+          background: '#fffbeb',
+          borderBottom: '1px solid #fde68a',
+          padding: '9px 20px',
+          fontSize: '12px',
+          color: '#92400e',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          fontWeight: 500,
+        }}>
+          <AlertTriangle size={13} color="#d97706" />
+          <span>가상자산 스테이킹은 확정 수익 예금이 아니며, 원금 보장 대상이 아닙니다. 모든 APY는 변동 가능합니다.</span>
+          <Link to="/risk" style={{ color: '#b45309', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px' }}>위험고지 →</Link>
         </div>
 
-        {/* Global Navigation Header */}
-        <header style={{ position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'rgba(9, 13, 22, 0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
-          <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '72px' }}>
-            
+        {/* ── Sticky Navigation ── */}
+        <header style={{
+          position: 'sticky', top: 0, zIndex: 100,
+          background: scrolled ? 'rgba(255,255,255,0.92)' : '#ffffff',
+          backdropFilter: scrolled ? 'blur(20px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
+          borderBottom: `1px solid ${scrolled ? 'var(--color-border)' : 'transparent'}`,
+          transition: 'all 0.3s ease',
+        }}>
+          <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px' }}>
+
             {/* Logo */}
-            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '22px', fontWeight: 800, fontFamily: 'var(--sans-outfit)', background: 'linear-gradient(135deg, #3b82f6 0%, #10b981 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
-                StakingMax
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
+              <div style={{
+                width: '32px', height: '32px',
+                background: 'linear-gradient(135deg, #3182f6 0%, #05c072 100%)',
+                borderRadius: '9px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <span style={{ color: '#fff', fontSize: '16px', fontWeight: 900 }}>S</span>
+              </div>
+              <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-navy)', letterSpacing: '-0.7px' }}>
+                스테이킹맥스
               </span>
-              <span style={{ fontSize: '10px', padding: '1px 6px', borderRadius: '4px', backgroundColor: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', fontWeight: 700 }}>MVP</span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <NavLink to="/" style={navLinkStyle}>홈</NavLink>
+            {/* Desktop Nav */}
+            <nav className="desktop-only" style={{ alignItems: 'center', gap: '2px' }}>
+              <NavLink to="/" style={navLinkStyle} end>홈</NavLink>
               <NavLink to="/assets" style={navLinkStyle}>코인 비교</NavLink>
               <NavLink to="/exchanges" style={navLinkStyle}>거래소 비교</NavLink>
               <NavLink to="/calculator" style={navLinkStyle}>수익 계산기</NavLink>
               <NavLink to="/tax-calculator" style={navLinkStyle}>세금 계산기</NavLink>
               <NavLink to="/guides" style={navLinkStyle}>가이드</NavLink>
-              <NavLink to="/methodology" style={navLinkStyle}>방법론</NavLink>
-              <NavLink to="/report" className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '13px', marginLeft: '8px' }}>
-                무료 리포트
-              </NavLink>
             </nav>
 
-            {/* Mobile Menu Trigger Button */}
-            <button className="mobile-only" onClick={toggleMobileMenu} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '4px' }}>
-              {isMobileMenuOpen ? <X style={{ width: '24px', height: '24px' }} /> : <Menu style={{ width: '24px', height: '24px' }} />}
-            </button>
+            {/* Desktop CTA */}
+            <div className="desktop-only" style={{ alignItems: 'center', gap: '10px' }}>
+              <Link to="/report" className="btn btn-primary" style={{ padding: '10px 22px', fontSize: '14px', borderRadius: '10px' }}>
+                무료 리포트
+              </Link>
+            </div>
 
+            {/* Mobile Hamburger */}
+            <button
+              className="mobile-only"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--color-navy)', lineHeight: 0 }}
+            >
+              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
 
-          {/* Mobile Navigation Panel */}
-          {isMobileMenuOpen && (
-            <div className="mobile-only" style={{ position: 'absolute', top: '72px', left: 0, right: 0, backgroundColor: 'rgba(9, 13, 22, 0.95)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <Link to="/" onClick={closeMobileMenu} style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>홈</Link>
-              <Link to="/assets" onClick={closeMobileMenu} style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>코인 비교</Link>
-              <Link to="/exchanges" onClick={closeMobileMenu} style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>거래소 비교</Link>
-              <Link to="/calculator" onClick={closeMobileMenu} style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>수익 계산기</Link>
-              <Link to="/tax-calculator" onClick={closeMobileMenu} style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>세금 계산기</Link>
-              <Link to="/guides" onClick={closeMobileMenu} style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>가이드</Link>
-              <Link to="/methodology" onClick={closeMobileMenu} style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>방법론</Link>
-              <Link to="/report" onClick={closeMobileMenu} className="btn btn-primary" style={{ width: '100%', boxSizing: 'border-box', padding: '12px', textAlign: 'center' }}>
+          {/* Mobile Menu Drawer */}
+          {mobileOpen && (
+            <div className="mobile-only" style={{
+              position: 'absolute', top: '64px', left: 0, right: 0,
+              background: '#ffffff',
+              borderTop: '1px solid var(--color-border)',
+              borderBottom: '1px solid var(--color-border)',
+              padding: '16px 24px 24px',
+              boxShadow: 'var(--shadow-lg)',
+            }}>
+              <Link to="/"              onClick={() => setMobileOpen(false)} style={mobileNavStyle}>홈</Link>
+              <Link to="/assets"        onClick={() => setMobileOpen(false)} style={mobileNavStyle}>코인 비교</Link>
+              <Link to="/exchanges"     onClick={() => setMobileOpen(false)} style={mobileNavStyle}>거래소 비교</Link>
+              <Link to="/calculator"    onClick={() => setMobileOpen(false)} style={mobileNavStyle}>수익 계산기</Link>
+              <Link to="/tax-calculator" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>세금 계산기</Link>
+              <Link to="/guides"        onClick={() => setMobileOpen(false)} style={mobileNavStyle}>가이드</Link>
+              <Link to="/risk"          onClick={() => setMobileOpen(false)} style={{ ...mobileNavStyle, borderBottom: 'none' }}>위험고지</Link>
+              <Link to="/report" onClick={() => setMobileOpen(false)} className="btn btn-primary" style={{ width: '100%', boxSizing: 'border-box', marginTop: '20px', borderRadius: '12px', padding: '15px' }}>
                 무료 리포트 신청
               </Link>
             </div>
           )}
         </header>
 
-        {/* Global Page Content Layout */}
-        <main style={{ flex: 1, position: 'relative' }}>
+        {/* ── Page Routes ── */}
+        <main style={{ flex: 1 }}>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/assets" element={<Assets />} />
-            <Route path="/assets/:slug" element={<AssetDetail />} />
-            <Route path="/exchanges" element={<Exchanges />} />
-            <Route path="/calculator" element={<Calculator />} />
-            <Route path="/tax-calculator" element={<TaxCalculator />} />
-            <Route path="/guides" element={<Guides />} />
-            <Route path="/methodology" element={<Methodology />} />
-            <Route path="/risk" element={<Risk />} />
-            <Route path="/report" element={<Report />} />
+            <Route path="/"                element={<Home />} />
+            <Route path="/assets"          element={<Assets />} />
+            <Route path="/assets/:slug"    element={<AssetDetail />} />
+            <Route path="/exchanges"       element={<Exchanges />} />
+            <Route path="/calculator"      element={<Calculator />} />
+            <Route path="/tax-calculator"  element={<TaxCalculator />} />
+            <Route path="/guides"          element={<Guides />} />
+            <Route path="/methodology"     element={<Methodology />} />
+            <Route path="/risk"            element={<Risk />} />
+            <Route path="/report"          element={<Report />} />
           </Routes>
         </main>
 
-        {/* Global Footer (Strict Compliance Disclaimers Built-In) */}
-        <footer style={{ backgroundColor: '#06090f', borderTop: '1px solid rgba(255, 255, 255, 0.08)', padding: '40px 0', fontSize: '13px', color: 'var(--text-secondary)' }}>
+        {/* ── Footer ── */}
+        <footer style={{ background: 'var(--color-navy)', color: 'rgba(255,255,255,0.6)', padding: '48px 0 32px' }}>
           <div className="container">
-            
-            {/* Regulatory Disclaimer Text */}
-            <div style={{ padding: '20px 24px', backgroundColor: 'rgba(13, 20, 35, 0.6)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '12px', lineHeight: 1.7, marginBottom: '32px' }}>
-              <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <ShieldAlert style={{ color: 'var(--accent)', width: '16px', height: '16px' }} /> 법적 면책 고지
-              </p>
-              <p style={{ margin: '0 0 8px 0' }}>
-                본 사이트의 정보는 가상자산 스테이킹 및 온체인 보상률에 대한 일반 정보 제공을 목적으로 하며, 투자 권유 또는 금융상품 판매·중개를 목적으로 하지 않습니다.
-              </p>
-              <p style={{ margin: '0 0 8px 0' }}>
-                표시된 APY, APR, 보상률은 네트워크 상황, 검증인 성과, 수수료, 토큰 가격, 정책 변경 등에 따라 변동될 수 있으며, 원금 또는 수익을 보장하지 않습니다.
-              </p>
-              <p style={{ margin: 0 }}>
-                가상자산은 높은 변동성과 손실 위험이 있으며, 이용자는 각 제공업체의 공식 약관과 위험 고지를 직접 확인한 후 스스로 판단해야 합니다.
-              </p>
+
+            {/* Disclaimer */}
+            <div style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '14px',
+              padding: '22px 24px',
+              fontSize: '12px', lineHeight: 1.7,
+              marginBottom: '40px',
+              color: 'rgba(255,255,255,0.5)',
+            }}>
+              <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>투자 위험 고지 </span>
+              본 사이트는 가상자산 스테이킹 정보를 제공하는 데이터 플랫폼으로, 투자 권유 또는 금융상품 판매·중개를 목적으로 하지 않습니다.
+              표시된 APY, 보상률은 네트워크 상황·검증인 성과·수수료·정책 변경 등에 따라 수시로 변동될 수 있으며, 원금 또는 수익을 보장하지 않습니다.
+              가상자산 투자는 원금 손실 가능성이 있으며, 이용자는 각 제공업체의 공식 약관을 직접 확인 후 스스로 판단해야 합니다.
             </div>
 
-            {/* Sitemap & Copyrights */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
+              {/* Brand */}
               <div>
-                <span style={{ fontSize: '15px', fontWeight: 700, color: '#fff', fontFamily: 'var(--sans-outfit)' }}>StakingMax</span>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '12px' }}>
-                  © {new Date().getFullYear()} StakingMax. All rights reserved. (투자 권유 아님)
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <div style={{ width: '28px', height: '28px', background: 'linear-gradient(135deg,#3182f6,#05c072)', borderRadius: '7px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ color: '#fff', fontSize: '14px', fontWeight: 900 }}>S</span>
+                  </div>
+                  <span style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 700, fontSize: '15px', letterSpacing: '-0.4px' }}>스테이킹맥스</span>
+                </div>
+                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginBottom: '4px' }}>
+                  독립적 가상자산 스테이킹 데이터 정보제공 플랫폼
+                </p>
+                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.25)' }}>
+                  © {new Date().getFullYear()} StakingMax. All rights reserved.
                 </p>
               </div>
 
-              <div style={{ display: 'flex', gap: '20px' }}>
-                <Link to="/risk" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>위험고지</Link>
-                <Link to="/methodology" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>방법론</Link>
-                <Link to="/guides" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>이용안내</Link>
+              {/* Links */}
+              <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '2px' }}>서비스</span>
+                  <Link to="/assets"    style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>코인 비교</Link>
+                  <Link to="/exchanges" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>거래소 비교</Link>
+                  <Link to="/calculator" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>수익 계산기</Link>
+                  <Link to="/tax-calculator" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>세금 계산기</Link>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '2px' }}>정보</span>
+                  <Link to="/guides"      style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>스테이킹 가이드</Link>
+                  <Link to="/methodology" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>데이터 방법론</Link>
+                  <Link to="/risk"        style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>위험고지</Link>
+                  <Link to="/report"      style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>무료 리포트</Link>
+                </div>
               </div>
             </div>
-
           </div>
         </footer>
 
