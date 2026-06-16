@@ -1,0 +1,22 @@
+/* Responsive navigation visibility helpers */
+.desktop-only {
+  display: flex !important;
+}
+
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .mobile-only {
+    display: block !important;
+  }
+  
+  header button.mobile-only {
+    display: inline-flex !important;
+  }
+}

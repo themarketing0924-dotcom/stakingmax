@@ -1,0 +1,297 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+
+:root {
+  /* Toss-inspired Luxury Fintech Light Palette */
+  --bg-main: #f4f6fa;
+  --bg-white: #ffffff;
+  --bg-gray-light: #f9fafb;
+  --bg-gray-dark: #e5e8eb;
+  
+  --primary: #3182f6;          /* Toss Blue */
+  --primary-hover: #1b64da;
+  --primary-light: rgba(49, 130, 246, 0.08);
+  
+  --secondary: #00b06c;        /* Emerald Green */
+  --secondary-light: rgba(0, 176, 108, 0.08);
+  
+  --danger: #f04452;           /* Red */
+  --danger-light: rgba(240, 68, 82, 0.08);
+  
+  --warning: #ff9100;          /* Orange Alert */
+  --warning-light: rgba(255, 145, 0, 0.08);
+
+  --text-main: #191f28;        /* Bold Navy Black */
+  --text-sub: #4e5968;         /* Medium Gray */
+  --text-muted: #8b95a1;       /* Light Gray-blue */
+  
+  --border-light: #e5e8eb;
+  --border-focus: #3182f6;
+
+  /* Typography */
+  --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  --transition-cubic: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 8px rgba(0, 0, 0, 0.01);
+  --shadow-hover: 0 16px 36px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(49, 130, 246, 0.03);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.3px;
+  line-height: 1.5;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography Customization */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-main);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+h1 {
+  font-size: 44px;
+  line-height: 1.3;
+}
+
+h2 {
+  font-size: 28px;
+  line-height: 1.4;
+}
+
+p {
+  color: var(--text-sub);
+  line-height: 1.6;
+}
+
+/* Common Layout Components */
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Smooth Entrance Animation */
+.animate-fade-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fintech Card Style */
+.card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-cubic);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(49, 130, 246, 0.15);
+}
+
+/* Unified Tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-white);
+  box-shadow: var(--shadow-card);
+}
+
+.premium-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.premium-table th {
+  background: var(--bg-gray-light);
+  padding: 18px 20px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-sub);
+  border-bottom: 1px solid var(--border-light);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.premium-table td {
+  padding: 20px;
+  font-size: 15px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-main);
+  transition: var(--transition-cubic);
+}
+
+.premium-table tr:last-child td {
+  border-bottom: none;
+}
+
+.premium-table tr:hover td {
+  background: rgba(49, 130, 246, 0.01);
+}
+
+/* Dynamic Alert/Info Box */
+.alert-box {
+  background: var(--bg-gray-light);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 20px 24px;
+  color: var(--text-sub);
+  font-size: 14px;
+  line-height: 1.6;
+  box-shadow: var(--shadow-card);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-cubic);
+  border: none;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.2);
+}
+
+.btn-secondary {
+  background: #f2f4f6;
+  color: var(--text-sub);
+}
+
+.btn-secondary:hover {
+  background: #e5e8eb;
+  color: var(--text-main);
+}
+
+/* Inputs & Forms */
+.form-group {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-sub);
+}
+
+.form-input, .form-select {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text-main);
+  font-size: 15px;
+  outline: none;
+  transition: var(--transition-cubic);
+  width: 100%;
+}
+
+.form-input:focus, .form-select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.15);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-low {
+  background: var(--secondary-light);
+  color: var(--secondary);
+}
+
+.badge-medium {
+  background: var(--warning-light);
+  color: var(--warning);
+}
+
+.badge-high {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.badge-primary {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.badge-sponsored {
+  background: rgba(168, 85, 247, 0.08);
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+  .card {
+    padding: 20px;
+  }
+  h1 {
+    font-size: 32px;
+  }
+  h2 {
+    font-size: 22px;
+  }
+  .premium-table th, .premium-table td {
+    padding: 14px 12px;
+    font-size: 14px;
+  }
+}
