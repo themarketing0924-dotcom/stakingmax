@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, NavLink, useLocation } from 'react-router-dom';
-import { Menu, X, AlertTriangle, ChevronDown } from 'lucide-react';
+import { Menu, X, AlertTriangle } from 'lucide-react';
 
 import Home from './pages/Home';
 import Assets from './pages/Assets';
